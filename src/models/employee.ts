@@ -1,8 +1,9 @@
 import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
+import { BaseModel, BaseAttributes } from './base';
+import { v4 as uuidv4 } from 'uuid';
 
-interface EmployeeAttributes {
-    id: string;
-    user_id: string;
+interface EmployeeAttributes extends BaseAttributes {
+    id: number;
     first_name: string;
     last_name: string;
     nik: string;
@@ -19,35 +20,30 @@ interface EmployeeCreationAttributes extends Optional<EmployeeAttributes, 'id'> 
 
 
 class Employee extends Model<EmployeeAttributes, EmployeeCreationAttributes> implements EmployeeAttributes {
-    public id!: string;
-    public user_id!: string;
+    public id!: number;
     public first_name!: string;
     public last_name!: string;
     public nik!: string;
     public gender!: string;
     public role!: string;
-    public phone_number?: string;
-    public address?: string;
-    public date_of_birth?: Date;
+    public phone_number!: string;
+    public address!: string;
+    public date_of_birth!: Date;
     public created_at!: Date;
     public updated_at!: Date;
+    public id_external?: string | undefined;
 }
 
 
 export default (sequelize: Sequelize) => {
     Employee.init({
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: DataTypes.INTEGER,
             primaryKey: true,
+            allowNull: false,
+            autoIncrement: true
         },
-        user_id: {
-            type: DataTypes.UUID,
-            references: {
-                model: 'Users',
-                key: 'id',
-            },
-        },
+        ...BaseModel.initializeAttributes(),
         first_name: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -75,12 +71,15 @@ export default (sequelize: Sequelize) => {
         },
         phone_number: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         address: {
             type: DataTypes.TEXT,
+            allowNull: false,
         },
         date_of_birth: {
             type: DataTypes.DATE,
+            allowNull: false,
         }
     }, {
         sequelize,

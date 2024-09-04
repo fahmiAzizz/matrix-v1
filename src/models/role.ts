@@ -1,7 +1,8 @@
 import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
+import { BaseModel, BaseAttributes } from './base';
 
-interface RoleAttributes {
-  id: string;
+interface RoleAttributes extends BaseAttributes {
+  id: number;
   role_name: string;
   created_at?: Date;
   updated_at?: Date;
@@ -11,19 +12,22 @@ interface RoleAttributes {
 interface RoleCreationAttributes extends Optional<RoleAttributes, 'id'> { }
 
 class Role extends Model<RoleAttributes, RoleCreationAttributes> implements RoleAttributes {
-  public id!: string;
+  public id!: number;
   public role_name!: string;
   public created_at!: Date;
   public updated_at!: Date;
+  public id_external?: string;
 }
 
 export default (sequelize: Sequelize) => {
   Role.init({
     id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.INTEGER,
       primaryKey: true,
+      allowNull: false,
+      autoIncrement: true
     },
+    ...BaseModel.initializeAttributes(),
     role_name: {
       type: DataTypes.STRING,
       unique: true,

@@ -1,7 +1,10 @@
 import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
+import { BaseAttributes, BaseModel } from './base';
+import { v4 as uuidv4 } from 'uuid';
 
-interface UserAttributes {
-    id: string;
+interface UserAttributes extends BaseAttributes {
+    id: number;
+    employee_id: number;
     username: string;
     password: string;
     token: string;
@@ -13,21 +16,32 @@ interface UserCreationAttributes extends Optional<UserAttributes, 'id'> { }
 
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
-    public id!: string;
+    public id!: number;
+    public employee_id!: number;
     public username!: string;
     public password!: string;
     public token!: string;
     public created_at!: Date;
     public updated_at!: Date;
+    public id_external?: string | undefined;
 }
 
 
 export default (sequelize: Sequelize) => {
     User.init({
         id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
+            type: DataTypes.INTEGER,
             primaryKey: true,
+            allowNull: false,
+            autoIncrement: true
+        },
+        ...BaseModel.initializeAttributes(),
+        employee_id: {
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'Employees',
+                key: 'id',
+            },
         },
         username: {
             type: DataTypes.STRING,

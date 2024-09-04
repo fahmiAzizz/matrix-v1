@@ -12,19 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteEmployee = exports.updateEmployee = exports.getEmployeeById = exports.getAllEmployees = exports.createEmployee = void 0;
+exports.getEmployeeById = exports.getAllEmployees = void 0;
 const db_1 = __importDefault(require("../config/db"));
-const createEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const employee = yield db_1.default.Employee.create(req.body);
-        res.status(201).json(employee);
-    }
-    catch (error) {
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.createEmployee = createEmployee;
 const getAllEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const employees = yield db_1.default.Employee.findAll();
@@ -49,40 +38,3 @@ const getEmployeeById = (req, res) => __awaiter(void 0, void 0, void 0, function
     }
 });
 exports.getEmployeeById = getEmployeeById;
-const updateEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const employee = yield db_1.default.Employee.findByPk(req.params.id);
-        if (!employee)
-            return res.status(404).json({ error: 'Employee not found' });
-        yield employee.update(req.body);
-        res.status(200).json(employee);
-    }
-    catch (error) {
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.updateEmployee = updateEmployee;
-const deleteEmployee = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const transaction = yield db_1.default.sequelize.transaction(); // Memulai transaksi
-    try {
-        const employee = yield db_1.default.Employee.findByPk(req.params.id, { transaction });
-        if (!employee) {
-            yield transaction.rollback(); // Membatalkan transaksi jika Employee tidak ditemukan
-            return res.status(404).json({ error: 'Employee not found' });
-        }
-        const user = yield db_1.default.User.findByPk(employee.user_id, { transaction });
-        if (user) {
-            yield user.destroy({ transaction }); // Menghapus User terkait dengan transaksi
-        }
-        yield employee.destroy({ transaction }); // Menghapus Employee dengan transaksi
-        yield transaction.commit(); // Commit transaksi jika semuanya berhasil
-        res.status(204).json();
-    }
-    catch (error) {
-        yield transaction.rollback(); // Membatalkan transaksi jika terjadi kesalahan
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.deleteEmployee = deleteEmployee;

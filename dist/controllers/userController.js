@@ -12,19 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteUser = exports.updateUser = exports.getUserById = exports.getAllUsers = exports.createUser = void 0;
+exports.getUserById = exports.getAllUsers = void 0;
 const db_1 = __importDefault(require("../config/db"));
-const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield db_1.default.User.create(req.body);
-        res.status(201).json(user);
-    }
-    catch (error) {
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.createUser = createUser;
 const getAllUsers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const users = yield db_1.default.User.findAll();
@@ -49,31 +38,3 @@ const getUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
 });
 exports.getUserById = getUserById;
-const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield db_1.default.User.findByPk(req.params.id);
-        if (!user)
-            return res.status(404).json({ error: 'User not found' });
-        yield user.update(req.body);
-        res.status(200).json(user);
-    }
-    catch (error) {
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.updateUser = updateUser;
-const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const user = yield db_1.default.User.findByPk(req.params.id);
-        if (!user)
-            return res.status(404).json({ error: 'User not found' });
-        yield user.destroy();
-        res.status(204).json();
-    }
-    catch (error) {
-        const err = error;
-        res.status(500).json({ error: err.message });
-    }
-});
-exports.deleteUser = deleteUser;

@@ -1,57 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
+const base_1 = require("./base");
 class Employee extends sequelize_1.Model {
 }
 exports.default = (sequelize) => {
-    Employee.init({
-        id: {
-            type: sequelize_1.DataTypes.UUID,
-            defaultValue: sequelize_1.DataTypes.UUIDV4,
+    Employee.init(Object.assign(Object.assign({ id: {
+            type: sequelize_1.DataTypes.INTEGER,
             primaryKey: true,
-        },
-        user_id: {
-            type: sequelize_1.DataTypes.UUID,
-            references: {
-                model: 'Users',
-                key: 'id',
-            },
-        },
-        first_name: {
+            allowNull: false,
+            autoIncrement: true
+        } }, base_1.BaseModel.initializeAttributes()), { first_name: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
-        },
-        last_name: {
+        }, last_name: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
-        },
-        nik: {
+        }, nik: {
             type: sequelize_1.DataTypes.STRING,
             unique: true,
             allowNull: false,
-        },
-        gender: {
+        }, gender: {
             type: sequelize_1.DataTypes.STRING,
             allowNull: false,
-        },
-        role: {
+        }, role: {
             type: sequelize_1.DataTypes.STRING,
             references: {
                 model: 'Roles',
                 key: 'role_name',
             },
             allowNull: false,
-        },
-        phone_number: {
+        }, phone_number: {
             type: sequelize_1.DataTypes.STRING,
-        },
-        address: {
+            allowNull: false,
+        }, address: {
             type: sequelize_1.DataTypes.TEXT,
-        },
-        date_of_birth: {
+            allowNull: false,
+        }, date_of_birth: {
             type: sequelize_1.DataTypes.DATE,
-        }
-    }, {
+            allowNull: false,
+        } }), {
         sequelize,
         tableName: 'Employees',
         timestamps: true,
