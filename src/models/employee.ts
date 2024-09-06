@@ -1,6 +1,5 @@
 import { Model, DataTypes, Sequelize, Optional } from 'sequelize';
 import { BaseModel, BaseAttributes } from './base';
-import { v4 as uuidv4 } from 'uuid';
 
 interface EmployeeAttributes extends BaseAttributes {
     id: number;

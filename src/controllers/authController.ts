@@ -20,8 +20,8 @@ export const login = async (req: Request, res: Response) => {
         }
 
 
-        if (!user.employee || user.employee.role !== 'Admin') {
-            return res.status(403).json({ message: 'Access denied. Admins only.' });
+        if (!user.employee || !['Admin', 'Employee', 'HR'].includes(user.employee.role)) {
+            return res.status(403).json({ message: 'Access denied.' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -31,7 +31,7 @@ export const login = async (req: Request, res: Response) => {
 
         const token = jwt.sign(
             { userId: user.id, role: user.employee.role },
-            process.env.JWT_KEY || '403836y48354348f',
+            process.env.JWT_KEY!,
             { expiresIn: '1h' }
         );
 
@@ -43,7 +43,7 @@ export const login = async (req: Request, res: Response) => {
             secure: false
         });
 
-        return res.status(200).json({ user, message: 'Login Successfully' });
+        return res.status(200).json({ token, user, message: 'Login Successfully' });
     } catch (error) {
         const err = error as Error;
         return res.status(500).json({ message: 'An error occurred during login', error: err.message });
@@ -66,6 +66,7 @@ export const logout = async (req: Request, res: Response) => {
                 id: UserId
             }
         })
+        res.clearCookie('token');
         return res.status(200).json({ message: 'Logout successful' });
     } catch (error) {
         const err = error as Error;

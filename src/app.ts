@@ -3,6 +3,7 @@ import userRoute from './routes/userRoute'
 import employeeRoute from './routes/employeeRoute'
 import roleRoute from './routes/roleRoute'
 import authRoute from './routes/authRoute'
+import attendanceRoute from './routes/attendanceRoutes'
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import db from './config/db';
@@ -19,7 +20,7 @@ const port = Number(process.env.PORT) || 5000
 db.sequelize.authenticate()
     .then(() => {
         console.log('Database connection has been established successfully.');
-        return db.sequelize.sync({ force: false }); // Sync all models
+        return db.sequelize.sync({ alter: true }); // Sync all models
     })
     .then(() => {
         console.log('Database synced successfully.');
@@ -39,6 +40,7 @@ app.use('/v1', authRoute)
 app.use('/v1/user', verifyToken, userRoute)
 app.use('/v1/employee', verifyToken, employeeRoute)
 app.use('/v1/role', verifyToken, roleRoute)
+app.use('/v1/attendance', verifyToken, attendanceRoute)
 
 
 

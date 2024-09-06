@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import db from '../config/db';
 
-// Extend Request interface to include user
 declare module 'express-serve-static-core' {
     interface Request {
         user?: any;

@@ -8,6 +8,7 @@ const userRoute_1 = __importDefault(require("./routes/userRoute"));
 const employeeRoute_1 = __importDefault(require("./routes/employeeRoute"));
 const roleRoute_1 = __importDefault(require("./routes/roleRoute"));
 const authRoute_1 = __importDefault(require("./routes/authRoute"));
+const attendanceRoutes_1 = __importDefault(require("./routes/attendanceRoutes"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const db_1 = __importDefault(require("./config/db"));
@@ -20,7 +21,7 @@ const port = Number(process.env.PORT) || 5000;
 db_1.default.sequelize.authenticate()
     .then(() => {
     console.log('Database connection has been established successfully.');
-    return db_1.default.sequelize.sync({ force: true }); // Sync all models
+    return db_1.default.sequelize.sync({ alter: true }); // Sync all models
 })
     .then(() => {
     console.log('Database synced successfully.');
@@ -36,6 +37,7 @@ app.use('/v1', authRoute_1.default);
 app.use('/v1/user', authMiddleware_1.verifyToken, userRoute_1.default);
 app.use('/v1/employee', authMiddleware_1.verifyToken, employeeRoute_1.default);
 app.use('/v1/role', authMiddleware_1.verifyToken, roleRoute_1.default);
+app.use('/v1/attendance', authMiddleware_1.verifyToken, attendanceRoutes_1.default);
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
