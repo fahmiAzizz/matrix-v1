@@ -21,7 +21,7 @@ const port = Number(process.env.PORT) || 5000;
 db_1.default.sequelize.authenticate()
     .then(() => {
     console.log('Database connection has been established successfully.');
-    return db_1.default.sequelize.sync({ alter: true }); // Sync all models
+    return db_1.default.sequelize.sync({ alter: false }); // Sync all models
 })
     .then(() => {
     console.log('Database synced successfully.');
@@ -30,7 +30,7 @@ db_1.default.sequelize.authenticate()
     console.error('Unable to connect to the database or sync models:', error);
 });
 app.use(express_1.default.json());
-app.use((0, cors_1.default)({ credentials: true }));
+app.use((0, cors_1.default)({ credentials: true, origin: true }));
 app.use(body_parser_1.default.json());
 app.use((0, cookie_parser_1.default)());
 app.use('/v1', authRoute_1.default);

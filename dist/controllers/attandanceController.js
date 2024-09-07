@@ -26,7 +26,7 @@ const clockIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             where: { user_id, date },
         });
         if (existingAttendance) {
-            return res.status(400).json({ message: 'User sudah absen masuk hari ini' });
+            return res.status(400).json({ message: 'You Has Already Clocked Today' });
         }
         const newAttendance = yield db_1.default.Attendance.create({
             user_id,
@@ -35,14 +35,14 @@ const clockIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             clock_in_time: new Date(),
         });
         return res.status(201).json({
-            message: 'Absen masuk berhasil',
+            message: 'Clock In Successful',
             data: newAttendance,
         });
     }
     catch (error) {
         const err = error;
         return res.status(500).json({
-            message: 'Terjadi kesalahan saat absen masuk',
+            message: 'An Error Occurred During Clock In',
             error: err.message,
         });
     }
@@ -55,7 +55,10 @@ const clockOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             where: { user_id, clock_out_time: null },
         });
         if (!attendance || !attendance.clock_in_time) {
-            return res.status(400).json({ message: 'Absen masuk tidak ditemukan' });
+            return res.status(400).json({ message: "You Have Not Clock In Yet" });
+        }
+        if (attendance.clock_out_time) {
+            return res.status(400).json({ message: "You Have Already Clocked Out Today" });
         }
         const clockOutTime = new Date();
         const totalHours = (clockOutTime.getTime() - attendance.clock_in_time.getTime()) / 3600000;
@@ -63,14 +66,14 @@ const clockOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         attendance.total_hours = totalHours;
         yield attendance.save();
         return res.status(200).json({
-            message: 'Absen keluar berhasil',
+            message: 'Clock Out Successful',
             data: attendance,
         });
     }
     catch (error) {
         const err = error;
         return res.status(500).json({
-            message: 'Terjadi kesalahan saat absen keluar',
+            message: 'An Error Occurred During Clock Out',
             error: err.message,
         });
     }

@@ -20,7 +20,7 @@ const port = Number(process.env.PORT) || 5000
 db.sequelize.authenticate()
     .then(() => {
         console.log('Database connection has been established successfully.');
-        return db.sequelize.sync({ alter: true }); // Sync all models
+        return db.sequelize.sync({ alter: false }); // Sync all models
     })
     .then(() => {
         console.log('Database synced successfully.');
@@ -31,8 +31,8 @@ db.sequelize.authenticate()
 
 
 
+app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
-app.use(cors({ credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 

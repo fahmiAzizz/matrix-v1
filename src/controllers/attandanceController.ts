@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import db from '../config/db';
-import { where } from 'sequelize';
 
 const getTodayDate = (): string => {
     const today = new Date();
@@ -17,7 +16,7 @@ export const clockIn = async (req: Request, res: Response) => {
         });
 
         if (existingAttendance) {
-            return res.status(400).json({ message: 'User sudah absen masuk hari ini' });
+            return res.status(400).json({ message: 'You Has Already Clocked Today' });
         }
 
         const newAttendance = await db.Attendance.create({
@@ -28,13 +27,13 @@ export const clockIn = async (req: Request, res: Response) => {
         });
 
         return res.status(201).json({
-            message: 'Absen masuk berhasil',
+            message: 'Clock In Successful',
             data: newAttendance,
         });
     } catch (error) {
         const err = error as Error;
         return res.status(500).json({
-            message: 'Terjadi kesalahan saat absen masuk',
+            message: 'An Error Occurred During Clock In',
             error: err.message,
         });
     }
@@ -50,7 +49,11 @@ export const clockOut = async (req: Request, res: Response) => {
         });
 
         if (!attendance || !attendance.clock_in_time) {
-            return res.status(400).json({ message: 'Absen masuk tidak ditemukan' });
+            return res.status(400).json({ message: "You Have Not Clock In Yet" });
+        }
+
+        if (attendance.clock_out_time) {
+            return res.status(400).json({ message: "You Have Already Clocked Out Today" });
         }
 
         const clockOutTime = new Date();
@@ -61,13 +64,13 @@ export const clockOut = async (req: Request, res: Response) => {
         await attendance.save();
 
         return res.status(200).json({
-            message: 'Absen keluar berhasil',
+            message: 'Clock Out Successful',
             data: attendance,
         });
     } catch (error) {
         const err = error as Error;
         return res.status(500).json({
-            message: 'Terjadi kesalahan saat absen keluar',
+            message: 'An Error Occurred During Clock Out',
             error: err.message,
         });
     }
