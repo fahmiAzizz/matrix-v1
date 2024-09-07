@@ -48,12 +48,8 @@ export const clockOut = async (req: Request, res: Response) => {
             where: { user_id, clock_out_time: null },
         });
 
-        if (!attendance || !attendance.clock_in_time) {
-            return res.status(400).json({ message: "You Have Not Clock In Yet" });
-        }
-
-        if (attendance.clock_out_time) {
-            return res.status(400).json({ message: "You Have Already Clocked Out Today" });
+        if (!attendance) {
+            return res.status(400).json({ message: "No clock-in record found or already clocked out" });
         }
 
         const clockOutTime = new Date();
@@ -75,6 +71,7 @@ export const clockOut = async (req: Request, res: Response) => {
         });
     }
 };
+
 
 export const getAttendanceListByUserId = async (req: Request, res: Response) => {
     const userId = parseInt(req.params.user_id, 10);

@@ -54,11 +54,8 @@ const clockOut = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const attendance = yield db_1.default.Attendance.findOne({
             where: { user_id, clock_out_time: null },
         });
-        if (!attendance || !attendance.clock_in_time) {
-            return res.status(400).json({ message: "You Have Not Clock In Yet" });
-        }
-        if (attendance.clock_out_time) {
-            return res.status(400).json({ message: "You Have Already Clocked Out Today" });
+        if (!attendance) {
+            return res.status(400).json({ message: "No clock-in record found or already clocked out" });
         }
         const clockOutTime = new Date();
         const totalHours = (clockOutTime.getTime() - attendance.clock_in_time.getTime()) / 3600000;
